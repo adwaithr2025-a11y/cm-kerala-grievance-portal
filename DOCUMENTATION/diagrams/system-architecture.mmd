@@ -1,0 +1,34 @@
+flowchart TB
+  subgraph Users
+    C["Citizen"]
+    M["CMO Administrator"]
+    O["Department Officer"]
+    V["Public visitor"]
+  end
+
+  subgraph "Next.js application (Vercel)"
+    UI["Public pages and role portals"]
+    API["REST route handlers /api/*"]
+    AUTH["Auth and RBAC<br/>JWT cookie, bcrypt"]
+    SVC["Grievance service layer<br/>workflow, SLA, visibility"]
+    AISVC["AI Grievance Assistant"]
+    SEED["Protected demo seed endpoint"]
+  end
+
+  DB[("PostgreSQL<br/>Prisma ORM")]
+  LLM["OpenAI-compatible LLM<br/>(optional)"]
+  FALLBACK["Labelled deterministic<br/>fallback analyser"]
+
+  V --> UI
+  C --> UI
+  M --> UI
+  O --> UI
+  UI --> API
+  API --> AUTH
+  API --> SVC
+  UI -->|Server Components| SVC
+  SVC --> DB
+  SVC --> AISVC
+  AISVC -->|AI_API_KEY set| LLM
+  AISVC -->|no key or provider error| FALLBACK
+  SEED --> DB

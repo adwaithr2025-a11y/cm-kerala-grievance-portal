@@ -1,0 +1,236 @@
+// CM Kerala Grievance Redressal Portal - Prisma schema
+// Database: PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  CITIZEN
+  CMO_ADMIN
+  OFFICER
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum GrievanceStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  IN_PROGRESS
+  RESOLVED
+  REOPENED
+}
+
+enum HistoryType {
+  CREATED
+  STATUS_CHANGE
+  ASSIGNMENT
+  REMARK
+  ESCALATION
+  RESOLUTION
+  AI_ANALYSIS
+  FEEDBACK
+  REOPEN
+}
+
+enum AssignmentStatus {
+  ASSIGNED
+  ACKNOWLEDGED
+  COMPLETED
+}
+
+enum EnquiryStatus {
+  NEW
+  READ
+  RESPONDED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  mobile       String?
+  passwordHash String
+  role         Role     @default(CITIZEN)
+  designation  String?
+  isActive     Boolean  @default(true)
+  departmentId String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  department          Department?         @relation(fields: [departmentId], references: [id])
+  grievances          Grievance[]         @relation("CitizenGrievances")
+  assignedGrievances  Grievance[]         @relation("AssignedOfficer")
+  historyEntries      GrievanceHistory[]  @relation("HistoryActor")
+  assignmentsReceived Assignment[]        @relation("OfficerAssignments")
+  assignmentsMade     Assignment[]        @relation("AssignmentsMade")
+  attachments         Attachment[]
+  feedback            CitizenFeedback[]
+
+  @@index([role])
+  @@index([departmentId])
+}
+
+model Department {
+  id           String   @id @default(cuid())
+  code         String   @unique
+  name         String   @unique
+  description  String
+  headName     String?
+  contactEmail String?
+  contactPhone String?
+  createdAt    DateTime @default(now())
+
+  users       User[]
+  grievances  Grievance[]
+  assignments Assignment[]
+}
+
+model Grievance {
+  id               String          @id @default(cuid())
+  referenceNo      String          @unique
+  citizenId        String
+  departmentId     String?
+  assignedOfficerId String?
+  district         String
+  category         String
+  subject          String
+  description      String          @db.Text
+  priority         Priority        @default(MEDIUM)
+  status           GrievanceStatus @default(SUBMITTED)
+
+  slaDays          Int      @default(7)
+  dueAt            DateTime
+  escalationLevel  Int      @default(0)
+
+  resolutionReport    String?   @db.Text
+  resolutionSubmittedAt DateTime?
+  cmoApprovedAt       DateTime?
+  resolvedAt          DateTime?
+  reopenedAt          DateTime?
+  reopenReason        String?  @db.Text
+
+  aiSummary              String?   @db.Text
+  aiSuggestedCategory    String?
+  aiSuggestedDepartment  String?
+  aiSuggestedPriority    Priority?
+  aiConfidence           Float?
+  aiProvider             String?
+  aiModel                String?
+  aiDuplicateRefs        Json?
+  aiAdopted              Boolean   @default(false)
+  aiAnalyzedAt           DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  citizen         User             @relation("CitizenGrievances", fields: [citizenId], references: [id])
+  department      Department?      @relation(fields: [departmentId], references: [id])
+  assignedOfficer User?            @relation("AssignedOfficer", fields: [assignedOfficerId], references: [id])
+  history         GrievanceHistory[]
+  attachments     Attachment[]
+  assignments     Assignment[]
+  feedback        CitizenFeedback?
+
+  @@index([status])
+  @@index([priority])
+  @@index([district])
+  @@index([category])
+  @@index([departmentId])
+  @@index([citizenId])
+  @@index([createdAt])
+}
+
+model GrievanceHistory {
+  id          String          @id @default(cuid())
+  grievanceId String
+  type        HistoryType     @default(STATUS_CHANGE)
+  status      GrievanceStatus?
+  title       String
+  note        String?         @db.Text
+  isInternal  Boolean         @default(false)
+  actorId     String?
+  actorName   String
+  actorRole   Role
+  createdAt   DateTime        @default(now())
+
+  grievance Grievance @relation(fields: [grievanceId], references: [id], onDelete: Cascade)
+  actor     User?     @relation("HistoryActor", fields: [actorId], references: [id])
+
+  @@index([grievanceId, createdAt])
+}
+
+model Assignment {
+  id             String           @id @default(cuid())
+  grievanceId    String
+  departmentId   String
+  officerId      String?
+  assignedById   String
+  note           String?          @db.Text
+  dueAt          DateTime?
+  status         AssignmentStatus @default(ASSIGNED)
+  acknowledgedAt DateTime?
+  completedAt    DateTime?
+  createdAt      DateTime         @default(now())
+
+  grievance  Grievance  @relation(fields: [grievanceId], references: [id], onDelete: Cascade)
+  department Department @relation(fields: [departmentId], references: [id])
+  officer    User?      @relation("OfficerAssignments", fields: [officerId], references: [id])
+  assignedBy User       @relation("AssignmentsMade", fields: [assignedById], references: [id])
+
+  @@index([grievanceId])
+  @@index([departmentId])
+}
+
+model Attachment {
+  id           String   @id @default(cuid())
+  grievanceId  String
+  filename     String
+  mimeType     String
+  size         Int
+  data         Bytes
+  uploadedById String?
+  createdAt    DateTime @default(now())
+
+  grievance  Grievance @relation(fields: [grievanceId], references: [id], onDelete: Cascade)
+  uploadedBy User?     @relation(fields: [uploadedById], references: [id])
+
+  @@index([grievanceId])
+}
+
+model CitizenFeedback {
+  id          String   @id @default(cuid())
+  grievanceId String   @unique
+  citizenId   String
+  rating      Int
+  comments    String?  @db.Text
+  createdAt   DateTime @default(now())
+
+  grievance Grievance @relation(fields: [grievanceId], references: [id], onDelete: Cascade)
+  citizen   User      @relation(fields: [citizenId], references: [id])
+
+  @@index([citizenId])
+}
+
+model ContactEnquiry {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String        @db.Text
+  status    EnquiryStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([createdAt])
+}

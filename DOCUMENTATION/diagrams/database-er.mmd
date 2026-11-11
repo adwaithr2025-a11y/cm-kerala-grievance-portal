@@ -1,0 +1,134 @@
+erDiagram
+  User ||--o{ Grievance : "submits as citizen"
+  User ||--o{ Grievance : "works as assigned officer"
+  User ||--o{ GrievanceHistory : "acts in"
+  User ||--o{ Assignment : "receives as officer"
+  User ||--o{ Assignment : "creates as assigner"
+  User ||--o{ Attachment : "uploads"
+  User ||--o{ CitizenFeedback : "gives"
+  Department ||--o{ User : "employs"
+  Department ||--o{ Grievance : "owns queue"
+  Department ||--o{ Assignment : "receives"
+  Grievance ||--o{ GrievanceHistory : "has audit entries"
+  Grievance ||--o{ Assignment : "has forwards"
+  Grievance ||--o{ Attachment : "has evidence"
+  Grievance ||--o| CitizenFeedback : "has at most one"
+
+  User {
+    string id PK
+    string name
+    string email UK
+    string mobile
+    string passwordHash
+    enum role
+    string designation
+    boolean isActive
+    string departmentId FK
+    datetime createdAt
+    datetime updatedAt
+  }
+
+  Department {
+    string id PK
+    string code UK
+    string name UK
+    string description
+    string headName
+    string contactEmail
+    string contactPhone
+    datetime createdAt
+  }
+
+  Grievance {
+    string id PK
+    string referenceNo UK
+    string citizenId FK
+    string departmentId FK
+    string assignedOfficerId FK
+    string district
+    string category
+    string subject
+    text description
+    enum priority
+    enum status
+    int slaDays
+    datetime dueAt
+    int escalationLevel
+    text resolutionReport
+    datetime resolutionSubmittedAt
+    datetime cmoApprovedAt
+    datetime resolvedAt
+    datetime reopenedAt
+    text reopenReason
+    text aiSummary
+    string aiSuggestedCategory
+    string aiSuggestedDepartment
+    enum aiSuggestedPriority
+    float aiConfidence
+    string aiProvider
+    string aiModel
+    json aiDuplicateRefs
+    boolean aiAdopted
+    datetime aiAnalyzedAt
+    datetime createdAt
+    datetime updatedAt
+  }
+
+  GrievanceHistory {
+    string id PK
+    string grievanceId FK
+    enum type
+    enum status
+    string title
+    text note
+    boolean isInternal
+    string actorId FK
+    string actorName
+    enum actorRole
+    datetime createdAt
+  }
+
+  Assignment {
+    string id PK
+    string grievanceId FK
+    string departmentId FK
+    string officerId FK
+    string assignedById FK
+    text note
+    datetime dueAt
+    enum status
+    datetime acknowledgedAt
+    datetime completedAt
+    datetime createdAt
+  }
+
+  Attachment {
+    string id PK
+    string grievanceId FK
+    string filename
+    string mimeType
+    int size
+    bytes data
+    string uploadedById FK
+    datetime createdAt
+  }
+
+  CitizenFeedback {
+    string id PK
+    string grievanceId FK
+    string citizenId FK
+    int rating
+    text comments
+    datetime createdAt
+  }
+
+  ContactEnquiry {
+    string id PK
+    string name
+    string email
+    string subject
+    text message
+    enum status
+    datetime createdAt
+    datetime updatedAt
+  }
