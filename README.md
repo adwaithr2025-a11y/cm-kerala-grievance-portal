@@ -12,8 +12,8 @@ Fill these in after deployment (see [DOCUMENTATION/06_Setup_and_Testing.md](DOCU
 
 | Item | Value |
 | --- | --- |
-| Hosted application | `https://<your-project>.vercel.app` |
-| GitHub repository | `https://github.com/<your-account>/cm-kerala-grievance-portal` |
+| Hosted application | https://cm-kerala-grievance-portal-zkt7.vercel.app |
+| GitHub repository | https://github.com/adwaithr2025-a11y/cm-kerala-grievance-portal |
 | Demo video | `https://<your-video-link>` |
 | Demo credentials | See the table below — also include these in the submission message |
 
@@ -294,8 +294,8 @@ Detailed deployment and troubleshooting steps: [DOCUMENTATION/06_Setup_and_Testi
 ```text
 WhiteMatrix AI Full Stack Engineer machine test — CM Kerala Grievance Portal
 
-Hosted application: https://<your-project>.vercel.app
-GitHub repository: https://github.com/<your-account>/cm-kerala-grievance-portal
+Hosted application: https://cm-kerala-grievance-portal-zkt7.vercel.app
+GitHub repository: https://github.com/adwaithr2025-a11y/cm-kerala-grievance-portal
 Demo video: https://<your-video-link>
 
 Demo credentials:
