@@ -127,12 +127,12 @@ The seed is idempotent for an existing database: it skips when grievances alread
 | --- | --- |
 | Source code | Repository root |
 | Setup and env example | `README.md`, `.env.example`, [06_Setup_and_Testing.md](06_Setup_and_Testing.md) |
-| Documentation | This folder, documents 01–08 |
+| Documentation | This folder, documents 01–07 |
 | Architecture diagram | [02_System_Architecture.md](02_System_Architecture.md), `diagrams/system-architecture.mmd` |
 | ER diagram | [03_Database_Design.md](03_Database_Design.md), `diagrams/database-er.mmd` |
 | Demo credentials | README section 1 |
 | Hosted link | To be filled after Vercel deployment (README section 1) |
-| Demo video | Recorded by the candidate (script in [08_Demo_Video_Script.md](08_Demo_Video_Script.md)) |
+| Demo video | Recorded by the candidate |
 
 ## 11. Project status (12 November 2026)
 

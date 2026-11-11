@@ -243,5 +243,3 @@ An **Overdue** case is past its due date and not Resolved. **Escalated** means t
 8. Sign in as the citizen → give 5-star feedback → reopen with a reason.
 9. Show the CMO command centre charts and the contact enquiry inbox.
 10. Close with the documentation, tests and deployment note.
-
-A timed version of this plan is in [08_Demo_Video_Script.md](08_Demo_Video_Script.md).

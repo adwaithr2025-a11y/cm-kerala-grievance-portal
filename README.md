@@ -266,7 +266,6 @@ Request bodies, status codes and examples: [DOCUMENTATION/04_API_Documentation.m
 | [05 AI Integration](DOCUMENTATION/05_AI_Integration.md) | Prompting, providers, fallback, duplicates, safety, evaluation |
 | [06 Setup and Testing](DOCUMENTATION/06_Setup_and_Testing.md) | Local setup, env, testing matrix, deployment, troubleshooting |
 | [07 User Guide](DOCUMENTATION/07_User_Guide.md) | Step-by-step guide for every role |
-| [08 Demo Video Script](DOCUMENTATION/08_Demo_Video_Script.md) | Self-recorded 4–5 minute demo script and final checklist |
 | [Diagrams](DOCUMENTATION/diagrams/) | Standalone Mermaid source for the architecture and ER diagrams |
 
 ---
